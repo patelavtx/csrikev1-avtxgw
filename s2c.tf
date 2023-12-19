@@ -15,8 +15,8 @@ resource "aviatrix_transit_external_device_conn" "avx_tx-csr_conn" {
   phase1_local_identifier = "public_ip"
   phase1_remote_identifier = [local.phase1_remote_identifier]
   enable_ikev2              = "false"
-  local_tunnel_cidr         = "${local.avtxapipa1}, ${local.avtxapipa2}"
-  remote_tunnel_cidr        = "${local.csrapipa1}, ${local.csrapipa2}"
+  local_tunnel_cidr         = "${local.avtxapipa1}/30, ${local.avtxapipa2}/30"
+  remote_tunnel_cidr        = "${local.csrapipa1}/30, ${local.csrapipa2}/30"
   depends_on = [
     azurerm_linux_virtual_machine.csr
   ]
