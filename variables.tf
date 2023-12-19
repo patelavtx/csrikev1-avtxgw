@@ -66,7 +66,8 @@ variable "ipsec_psk" {
 
 
 
-# avtx-tx vars
+# avtx-tx vars;  omit for module based runs
+/*
 variable "controller_ip" {
   description = "Set controller ip"
   type        = string
@@ -75,6 +76,7 @@ variable "controller_ip" {
 variable "ctrl_password" {
     type = string
 }
+*/
 
 variable "account" {
     type = string
@@ -83,6 +85,7 @@ variable "account" {
 variable "cloud" {
   description = "Cloud type"
   type        = string
+
 
   validation {
     condition     = contains(["aws", "azure", "oci", "ali", "gcp"], lower(var.cloud))
