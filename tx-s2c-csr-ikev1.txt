@@ -1,0 +1,175 @@
+! Aviatrix Site2Cloud configuration template
+!
+! This configuration serves as a general guideline and may have to be modified to
+! be functional on your device.
+!
+! If the provided encryption or authentication type is configured as 'n/a', then
+! there was not a known mapping from the selected type to the encryption or
+! authentication type expected by the Cisco device.  Please reference the Cisco
+! documentation for your device and replace 'n/a' with the expected configuration.                                                                                                 
+! 
+! This connection has two IPsec tunnels between the customer gateway and 
+! Aviatrix gateways in the cloud. Tunnel #1 is the primary tunnel. The 
+! customer gateway should be configured in such a way that it should
+! switch over to tunnel #2 when tunnel #1 fails.
+! 
+! You need to populate these values throughout the config based on your setup:
+! <crypto_policy_number>: the IKE crypto policy number
+! <tunnel_number1>: the primary IPSec tunnel interface number
+! <tunnel_number2>: the backup IPSec tunnel interface number
+! <ios_wan_interface1>: the primary source interface of tunnel packets
+! <ios_wan_interface2>: the backup source interface of tunnel packets
+! <customer_tunnel_ip1>: any un-used IPv4 address for the primary tunnel interface
+!                        when static routing is used (e.g. 1.1.1.1)
+! <customer_tunnel_ip2>: any un-used IPv4 address for the backup tunnel interface
+!                        when static routing is used (e.g. 1.1.1.3)
+! <netmask>: netmask for customer_tunnel_ip. Please use 255.255.255.255
+!
+! --------------------------------------------------------------------------------
+! IPSec Tunnel #1 (Primary)
+! --------------------------------------------------------------------------------
+! #1: Internet Key Exchange (IKE) Configuration
+! A policy is established for the supported ISAKMP encryption, 
+! authentication, Diffie-Hellman, lifetime, and key parameters.
+!
+crypto keyring 100
+  pre-shared-key address 20.56.197.46 key Aviatrix123#
+  exit
+!
+crypto isakmp policy 100
+  encryption 256-aes
+  authentication pre-share
+  hash sha256
+  group 14
+  lifetime 28800
+  exit
+!
+! DPD configuration on Aviatrix gateway for this site2cloud connection is given below:
+!     status       : enabled
+!     initial delay: 10 seconds seconds
+!     retry        : 3 seconds seconds
+!     maxfail      : 3
+!
+crypto isakmp keepalive 10 3 periodic
+!
+crypto isakmp profile 100
+  keyring 100 
+  self-identity address
+  match identity address 20.56.197.46 255.255.255.255
+  exit
+!
+!---------------------------------------------------------------------------------
+! #2: IPSec Configuration
+! The IPSec transform set defines the encryption, authentication, and IPSec
+! mode parameters.
+!
+crypto ipsec transform-set 100 esp-256-aes esp-sha256-hmac
+  mode tunnel
+  exit
+crypto ipsec df-bit clear
+!
+crypto ipsec profile 100
+  set security-association lifetime seconds 3600
+  set transform-set 100
+  set pfs group14
+  set isakmp-profile 100
+  set security-association lifetime kilobytes disable
+  set security-association lifetime seconds 3600
+  exit
+!
+!---------------------------------------------------------------------------------------
+! #3: Tunnel Interface Configuration
+! The virtual tunnel interface is used to communicate with the remote IPSec endpoint 
+! to establish the IPSec tunnel.
+!
+interface Tunnel 100
+  ip address 169.254.21.209 255.255.255.252
+  ip mtu 1436
+  ip tcp adjust-mss 1387
+  tunnel source GigabitEthernet1 
+  tunnel mode ipsec ipv4
+  tunnel destination 20.56.197.46
+  tunnel protection ipsec profile 100 
+  ip virtual-reassembly
+  exit
+!
+!
+! --------------------------------------------------------------------------------
+! IPSec Tunnel #2 (Backup)
+! --------------------------------------------------------------------------------
+! #4: Internet Key Exchange (IKE) Configuration
+!
+crypto keyring 101
+  pre-shared-key address 20.56.197.237 key Aviatrix123#
+  exit
+!
+crypto isakmp profile 101
+  keyring 101
+  self-identity address
+  match identity address 20.56.197.237 255.255.255.255
+  exit
+!
+!---------------------------------------------------------------------------------
+! #5: IPSec Configuration
+! The IPSec transform set defines the encryption, authentication, and IPSec
+! mode parameters.
+!
+crypto ipsec transform-set 101 esp-256-aes esp-sha256-hmac
+  mode tunnel
+  exit
+!
+crypto ipsec profile 101
+  set security-association lifetime seconds 3600
+  set transform-set 101
+  set pfs group14
+  set isakmp-profile 101
+  set security-association lifetime kilobytes disable
+  set security-association lifetime seconds 3600
+  exit
+!
+!---------------------------------------------------------------------------------------
+! #6: Tunnel Interface Configuration
+! The virtual tunnel interface is used to communicate with the remote IPSec endpoint
+! to establish the IPSec tunnel.
+!
+interface Tunnel 101
+  ip address 169.254.22.209 255.255.255.252
+  ip mtu 1436
+  ip tcp adjust-mss 1387
+  tunnel source GigabitEthernet1 
+  tunnel mode ipsec ipv4
+  tunnel destination 20.56.197.237
+  tunnel protection ipsec profile 101
+  ip virtual-reassembly
+  exit
+!
+!---------------------------------------------------------------------------------------
+! #7: BGP Routing Configuration
+! The Border Gateway Protocol (BGPv4) is used to exchange routes from the VPC to on-prem
+! network. Each BGP router has an Autonomous System Number (ASN).
+!
+router bgp 65100
+  bgp log-neighbor-changes
+  neighbor 169.254.21.210 remote-as 65111
+  neighbor 169.254.21.210 timers 60 180
+  ! bgp md5 authentication password need to be added if configured
+  ! neighbor 169.254.21.210 password 
+  neighbor 169.254.22.210 remote-as 65111
+  neighbor 169.254.22.210 timers 60 180
+  ! bgp md5 authentication password need to be added if configured
+  ! neighbor 169.254.22.210 password 
+ !
+ address-family ipv4
+  redistribute connected
+  neighbor 169.254.21.210 activate
+  neighbor 169.254.21.210 soft-reconfiguration inbound
+  neighbor 169.254.22.210 activate
+  neighbor 169.254.22.210 soft-reconfiguration inbound
+  maximum-paths 4
+ exit-address-family
+!
+!---------------------------------------------------------------------------------------
+!
+!
+For vendor specific instructions, please go to the following URL:
+http://docs.aviatrix.com/#site2cloud
