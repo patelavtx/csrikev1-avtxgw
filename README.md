@@ -28,15 +28,29 @@ on linux_amd64
 ```
 terraform {
   required_providers {
+    aviatrix = {
+      source = "aviatrixsystems/aviatrix"
+      version = "~> 3.1.0"
+    }
     azurerm = {
-      source  = "hashicorp/azurerm"
+      source = "hashicorp/azurerm"
+      #version = ">= 3.15.0"
     }
   }
 }
 
-# Configure the Microsoft Azure Provider
+
+# Configure Aviatrix and Azure provider
+provider "aviatrix" {
+  controller_ip           = var.controller_ip
+  username                = "admin"
+  password                = var.ctrl_password
+
+}
+
 provider "azurerm" {
-  features {}
+    features {}
 }
 ```
+
 
