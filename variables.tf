@@ -6,7 +6,7 @@ variable "csr_rg_name" {
 
 variable "csr_rg_location" {
     description = "Provide location of CSR resource group"
-    default = "West Europe"
+    default = "UK South"
 }
 
 variable "csr_name" {
@@ -91,6 +91,7 @@ variable "instance_size" {
 variable "region" {
   description = "Set regions"
   type        = string
+  default = "UK South"
 }
 
 variable "rg" {
