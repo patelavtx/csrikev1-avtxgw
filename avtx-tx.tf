@@ -14,6 +14,7 @@ module "mc-transit" {
   insane_mode = "true"
   name = "aztransit111-weu"
   enable_advertise_transit_cidr = "true"
+  enable_bgp_over_lan = "true"
   bgp_lan_interfaces_count = "1"
   enable_segmentation    = "true"
   tags  =  var.tags
