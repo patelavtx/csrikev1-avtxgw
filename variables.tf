@@ -96,6 +96,7 @@ variable "region" {
 variable "rg" {
   description = "Set RG"
   type        = string
+  default = "atulrg-tx111"
 }
 
 variable "localasn" {
