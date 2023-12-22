@@ -240,7 +240,7 @@ module "azure-linux-vm-public" {
   region              = azurerm_resource_group.csr_rg.location
   resource_group_name = azurerm_resource_group.csr_rg.name
   subnet_id           = azurerm_subnet.csr_public.id
-  vm_name             = "csrpublic-vm"
+  vm_name             = "${var.csr_name}-publicvm"
   # public_key_file     = var.public_key_file
 }
 
