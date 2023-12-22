@@ -94,6 +94,7 @@ variable "region" {
   default = "UK South"
 }
 
+# existing rg
 variable "rg" {
   description = "Set RG"
   type        = string
