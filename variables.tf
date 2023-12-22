@@ -94,12 +94,14 @@ variable "region" {
   default = "UK South"
 }
 
-# existing rg
+/*
+# existing rg - removing for module call and repo
 variable "rg" {
   description = "Set RG"
   type        = string
   default = "atulrg-tx111"
 }
+*/
 
 variable "localasn" {
   description = "Set internal BGP ASN"
