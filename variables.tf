@@ -49,8 +49,8 @@ variable "ipsec_psk" {
   default = "Aviatrix123#"
 }
 
-
-
+# Removed as not needed when using module.  Uncomment if cloned and using locally, also then needs provider.tf
+/*
 # avtx-tx vars;  omit for module based runs
 
 variable "controller_ip" {
@@ -61,7 +61,7 @@ variable "controller_ip" {
 variable "ctrl_password" {
     type = string
 }
-
+*/
 
 variable "account" {
     type = string
