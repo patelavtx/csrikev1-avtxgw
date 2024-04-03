@@ -11,27 +11,27 @@ variable "csr_rg_location" {
 
 variable "csr_name" {
     description = "Provide CSR Name"
-    default = "csr-ike1"
+    default = "csr-ike210"
 }
 
 variable "csr_vnet_address_space" {
   description = "Provide CSR vNet address space"
-  default = "10.214.32.0/24"
+  default = "10.210.32.0/24"
 }
 
 variable "csr_public_subnet_address_space" {
   description = "Provide CSR vNet address space"
-  default = "10.214.32.0/25"
+  default = "10.210.32.0/25"
 }
 
 variable "csr_private_subnet_address_space" {
   description = "Provide CSR vNet address space"
-  default = "10.214.32.128/25"
+  default = "10.210.32.128/25"
 }
 
 variable "csr_asn" {
   description = "CSR ASN number, cannot be 65515"
-  default = 65214
+  default = 65210
 }
 
 variable "admin_username" {
