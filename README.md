@@ -52,6 +52,22 @@ Suggested variables to set.  Most mc-transit variables for transit gateway can b
 | 
 
 
+### Example of TFVARS
+
+```
+controller_ip = ""
+ctrl_password = ""
+account       = ""
+cloud         = "Azure"
+cidr          = "10.111.28.0/23"
+region        = "West Europe"
+rg            = "atulrg-tx111"             # specify existing RG
+localasn      = "65111"
+tags = {
+  ProjectName        = "test-csr-ipsec"
+  BusinessOwnerEmail = ""
+}
+```
 
 
 ## Validated environment
